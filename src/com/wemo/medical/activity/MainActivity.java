@@ -1,0 +1,651 @@
+package com.wemo.medical.activity;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.AlertDialog.Builder;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.wemo.medical.R;
+import com.wemo.medical.adapter.ExamAdapter;
+import com.wemo.medical.drawer.MenuDrawer;
+import com.wemo.medical.entity.CustomerInfo;
+import com.wemo.medical.entity.Exam;
+import com.wemo.medical.entity.UpdateData;
+import com.wemo.medical.fragment.MenuFragment;
+import com.wemo.medical.http.RequestHttp;
+import com.wemo.medical.util.ActivityStartAnim;
+import com.wemo.medical.util.Constants;
+import com.wemo.medical.view.CommentListView;
+import com.wemo.medical.view.CommentListView.IXListViewListener;
+
+@SuppressLint({ "SetJavaScriptEnabled", "HandlerLeak", "InflateParams" })
+public class MainActivity extends FragmentActivity implements
+		View.OnClickListener, OnItemClickListener, IXListViewListener {
+	private String newVerCode = "";
+	private String VerCode = "";
+
+	// 提示语
+	private String updateMsg = "有最新的软件包是否下载";
+
+	// 返回的安装包url
+	private String apkUrl = "";
+
+	private Dialog noticeDialog;
+
+	private Dialog downloadDialog;
+	/* 下载包安装路径 */
+	private static final String savePath = "/sdcard/hmsp/";
+
+	private static String saveFileName = "";
+
+	/* 进度条与通知ui刷新的handler和msg常量 */
+	private ProgressBar mProgress;
+
+	private boolean interceptFlag = false;
+	private static final int DOWN_UPDATE = 1;
+
+	private static final int DOWN_OVER = 2;
+
+	private int progress;
+
+	private Thread downLoadThread;
+
+	private static final String STATE_MENUDRAWER = "com.example.smenubmenu.MainActivity.menuDrawer";
+	private static final String STATE_ACTIVE_VIEW_ID = "com.example.smenubmenu.MainActivity.activeViewId";
+
+	public MenuDrawer mMenuDrawer;
+	public int mActiveViewId;
+	public static Fragment[] mFragments;
+	public static Handler finishHandler;
+	public static Handler pushHandler;
+	private ImageView toMenu;
+	private CommentListView mListView;
+	private MedicalApplication application;
+	private CustomerInfo cusInfo;
+	private RequestHttp http;
+	private Context context;
+	private List<Exam> exams;
+	private List<Exam> examAll;
+	private ExamAdapter examAdapter;
+	private RefreshHandler refreshHandler;
+	private LoadMoreHandler loadMoreHandler;
+	private int currentPage = 1;
+	private int pageSize = 10;
+	private Intent intent;
+	private UpdateData updateData;
+	private SharedPreferences preferences;
+	private Editor editor;
+	/**
+	 * 推送启动界面表示； 启动"投诉中心"界面
+	 */
+	private static final int PUSH_TO_COMPLAITS = 1;
+	/**
+	 * 推送启动界面表示； 启动"体检报告"界面
+	 */
+	private static final int PUSH_TO_EXAM = 2;
+	/**
+	 * 推送启动界面表示； 启动"健管历史"界面
+	 */
+	private static final int PUSH_TO_HISTORY = 3;
+
+	@SuppressWarnings("deprecation")
+	@SuppressLint("HandlerLeak")
+	@Override
+	public void onCreate(Bundle inState) {
+		super.onCreate(inState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		if (inState != null) {
+			mActiveViewId = inState.getInt(STATE_ACTIVE_VIEW_ID);
+		}
+
+		mMenuDrawer = MenuDrawer.attach(this, MenuDrawer.MENU_DRAG_WINDOW);
+		mMenuDrawer.setContentView(R.layout.activity_main);
+		//mMenuDrawer.setContentView(R.layout.test_1);
+		mMenuDrawer.setMenuView(R.layout.menu_frame);
+		FragmentTransaction t = this.getSupportFragmentManager()
+				.beginTransaction();
+		Fragment mFrag = new MenuFragment();
+		t.replace(R.id.menu_frame, mFrag);
+		t.commit();
+
+		mMenuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
+		mMenuDrawer.setMenuSize(6 * getWindowManager().getDefaultDisplay()
+				.getWidth() / 7);
+
+		TextView activeView = (TextView) findViewById(mActiveViewId);
+		mListView = (CommentListView) this.findViewById(R.id.main_listview);
+		if (activeView != null) {
+			mMenuDrawer.setActiveView(activeView);
+		}
+		mMenuDrawer.peekDrawer();
+		mMenuDrawer.setOffsetMenuEnabled(true);
+
+		setHandler();
+		initView();
+		getUpdateData();
+		initMembers();
+
+		
+		// 登录成功后进入菜单页
+		toMenu.performClick();
+	}
+
+	private void initView() {
+		context = MainActivity.this;
+		toMenu = (ImageView) this.findViewById(R.id.main_btn_to_menu);
+		mListView = (CommentListView) this.findViewById(R.id.main_listview);
+		toMenu.setOnClickListener(this);
+		mListView.setPullLoadEnable(false);
+		mListView.setOnItemClickListener(this);
+		mListView.setXListViewListener(this);
+		mListView.setDividerHeight(0);
+	}
+
+	private void initMembers() {
+		application = (MedicalApplication) getApplication();
+		exams = new ArrayList<Exam>();
+		examAll = new ArrayList<Exam>();
+		cusInfo = application.getCustomerInfo();
+		http = RequestHttp.getInstance(context);
+		GetRiskReportHandler mHandler = new GetRiskReportHandler();
+		refreshHandler = new RefreshHandler();
+		loadMoreHandler = new LoadMoreHandler();
+		http.requestGetExamList(mHandler, cusInfo.getId(), currentPage + "");
+		setListView();
+		showDialog();
+	}
+
+	private void setListView() {
+		examAdapter = new ExamAdapter(examAll, context);
+		mListView.setAdapter(examAdapter);
+	}
+
+	private class GetRiskReportHandler extends Handler {
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case RequestHttp.REQUEST_SUCCESS:
+				exams = (List<Exam>) msg.obj;
+				examAll.clear();
+				if (exams.size() == 10) {
+					mListView.setPullLoadEnable(true);
+				} else {
+					mListView.setPullLoadEnable(false);
+				}
+				for (int i = 0; i < exams.size(); i++) {
+					examAll.add(exams.get(i));
+				}
+				examAdapter.notifyDataSetChanged();
+				waitDialog.dismiss();
+				break;
+
+			case RequestHttp.REQUEST_FAILER:
+				waitDialog.dismiss();
+				RequestHttp.badRequest(Integer.parseInt(msg.obj.toString()),
+						null);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	}
+
+	private class RefreshHandler extends Handler {
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case RequestHttp.REQUEST_SUCCESS:
+				exams = (List<Exam>) msg.obj;
+				examAll.clear();
+				if (exams.size() == 10) {
+					mListView.setPullLoadEnable(true);
+				} else {
+					mListView.setPullLoadEnable(false);
+				}
+				for (int i = 0; i < exams.size(); i++) {
+					examAll.add(exams.get(i));
+				}
+				examAdapter.notifyDataSetChanged();
+				stopRefresh();
+				break;
+
+			case RequestHttp.REQUEST_FAILER:
+				stopRefresh();
+				RequestHttp.badRequest(Integer.parseInt(msg.obj.toString()),
+						null);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	}
+
+	private class LoadMoreHandler extends Handler {
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case RequestHttp.REQUEST_SUCCESS:
+				exams = (List<Exam>) msg.obj;
+				examAll.clear();
+				if (exams.size() == 10) {
+					mListView.setPullLoadEnable(true);
+				} else {
+					mListView.setPullLoadEnable(false);
+				}
+				for (int i = 0; i < exams.size(); i++) {
+					examAll.add(exams.get(i));
+				}
+				examAdapter.notifyDataSetChanged();
+				stopLoadMore();
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	}
+
+	private void setHandler() {
+		finishHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+				if (msg.what == 200) {
+					MainActivity.this.finish();
+				} else if (msg.what == 201) {
+					mMenuDrawer.closeMenu();
+				}
+			}
+		};
+
+		pushHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+				switch (msg.what) {
+				case PUSH_TO_COMPLAITS:
+					intent = new Intent(MainActivity.this,
+							ComplaintsActivity.class);
+					startActivity(intent);
+					break;
+
+				case PUSH_TO_EXAM:
+					intent = new Intent(MainActivity.this, ExamActivity.class);
+					startActivity(intent);
+					break;
+
+				case PUSH_TO_HISTORY:
+					intent = new Intent(MainActivity.this,
+							HistoryActivity.class);
+					startActivity(intent);
+					break;
+
+				default:
+					break;
+				}
+			}
+		};
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle inState) {
+		super.onRestoreInstanceState(inState);
+		mMenuDrawer.restoreState(inState.getParcelable(STATE_MENUDRAWER));
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(STATE_MENUDRAWER, mMenuDrawer.saveState());
+		outState.putInt(STATE_ACTIVE_VIEW_ID, mActiveViewId);
+	}
+
+	@Override
+	public void onBackPressed() {
+		final int drawerState = mMenuDrawer.getDrawerState();
+		if (drawerState == MenuDrawer.STATE_OPEN
+				|| drawerState == MenuDrawer.STATE_OPENING) {
+			mMenuDrawer.closeMenu();
+			return;
+		}
+		super.onBackPressed();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.main_btn_to_menu:
+			mMenuDrawer.openMenu();
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			ConfirmExitDialog dialog = new ConfirmExitDialog(context);
+			dialog.show();
+		}
+		return false;
+	}
+
+	private void showDialog() {
+		inflater = LayoutInflater.from(this);
+		view = inflater.inflate(R.layout.dialog_upload, null);
+		iv_loading = (ImageView) view.findViewById(R.id.iv_loading);
+
+		waitDialog = Constants.createLoadingDialog(MainActivity.this, view);
+		waitDialog.show();
+		Object obj = iv_loading.getBackground();
+		anim = (AnimationDrawable) obj;
+		anim.stop();
+		anim.start();
+	}
+
+	private View view;
+	private LayoutInflater inflater;
+	private ImageView iv_loading;
+	private Dialog waitDialog;
+	private AnimationDrawable anim = null;
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		// Intent intent = new Intent(MainActivity.this,
+		// RiskReportActivity.class);
+		Intent intent = new Intent(MainActivity.this, ExamDetailActivity.class);
+		// Intent intent = new
+		// Intent("com.wemo.medical.activity.ExamDetailActivity");
+		intent.putExtra("examId", examAll.get(arg2 - 1).getId());
+		intent.putExtra("examNo", examAll.get(arg2 - 1).getExamNo());
+		startActivity(intent);
+		ActivityStartAnim.RightToLeft2(this);
+	}
+
+	@Override
+	public void onRefresh() {
+		currentPage = 1;
+		http.requestGetRiskReport(refreshHandler, cusInfo.getHandsetNo(),
+				pageSize + "", currentPage + "");
+	}
+
+	@Override
+	public void onLoadMore() {
+		currentPage++;
+		http.requestGetRiskReport(loadMoreHandler, cusInfo.getHandsetNo(),
+				pageSize + "", currentPage + "");
+	}
+
+	private void stopRefresh() {
+		mListView.stopRefresh();
+		String time = Constants.getStringDate();
+		mListView.setRefreshTime(time);
+	}
+
+	private void stopLoadMore() {
+		mListView.stopLoadMore();
+	}
+
+	/**
+	 * 获得版本号
+	 */
+	public String getVerCode(Context context) {
+		int verCode = -1;
+		try {
+			PackageManager pm = getPackageManager();
+			PackageInfo pi = pm.getPackageInfo(getPackageName(), 0);// getPackageName()是你当前类的包名，0代表是获取版本信息
+			verCode = pi.versionCode;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			Log.e("版本号获取异常", e.getMessage());
+		}
+		return String.valueOf(verCode);
+	}
+
+	private class UpdateHandler extends Handler {
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case RequestHttp.REQUEST_SUCCESS:
+				updateData = (UpdateData) msg.obj;
+				// 这里来检测版本是否需要更新
+				showNoticeDialog(getVerCode(context), updateData);
+				break;
+			case RequestHttp.REQUEST_FAILER:
+				RequestHttp.badRequest(Integer.parseInt(msg.obj.toString()),
+						null);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	private void showNoticeDialog(String verCode, UpdateData updateData) {
+		// 判断是否版本更新
+		VerCode = verCode;
+		try {
+			newVerCode = updateData.getVerCode();
+			apkUrl = updateData.getApkUrl();
+			saveFileName = savePath + updateData.getApkName();
+			if (Float.valueOf(newVerCode) > Float.valueOf(VerCode)) {
+				AlertDialog.Builder builder = new Builder(context);
+				builder.setTitle("软件版本更新");
+				builder.setMessage(updateMsg);
+				builder.setPositiveButton("下载", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						showDownloadDialog();
+					}
+				});
+				builder.setNegativeButton("以后再说", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				noticeDialog = builder.create();
+				noticeDialog.show();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private void showDownloadDialog() {
+		AlertDialog.Builder builder = new Builder(context);
+		builder.setTitle("软件版本更新");
+
+		final LayoutInflater inflater = LayoutInflater.from(context);
+		View v = inflater.inflate(R.layout.progress, null);
+		mProgress = (ProgressBar) v.findViewById(R.id.progress);
+
+		builder.setView(v);
+		builder.setNegativeButton("取消", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				interceptFlag = true;
+			}
+		});
+		downloadDialog = builder.create();
+		downloadDialog.show();
+
+		downloadApk();
+	}
+
+	private Runnable mdownApkRunnable = new Runnable() {
+		@Override
+		public void run() {
+			try {
+				URL url = new URL(apkUrl);
+
+				HttpURLConnection conn = (HttpURLConnection) url
+						.openConnection();
+				conn.connect();
+				int length = conn.getContentLength();
+				InputStream is = conn.getInputStream();
+
+				File file = new File(savePath);
+				if (!file.exists()) {
+					file.mkdir();
+				}
+				String apkFile = saveFileName;
+				File ApkFile = new File(apkFile);
+				FileOutputStream fos = new FileOutputStream(ApkFile);
+
+				int count = 0;
+				byte buf[] = new byte[1024];
+
+				do {
+					int numread = is.read(buf);
+					count += numread;
+					progress = (int) (((float) count / length) * 100);
+					// 更新进度
+					mHandler.sendEmptyMessage(DOWN_UPDATE);
+					if (numread <= 0) {
+						// 下载完成通知安装
+						mHandler.sendEmptyMessage(DOWN_OVER);
+						break;
+					}
+					fos.write(buf, 0, numread);
+				} while (!interceptFlag);// 点击取消就停止下载.
+
+				fos.close();
+				is.close();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+	};
+
+	/**
+	 * 下载apk
+	 * 
+	 * @param url
+	 */
+
+	private void downloadApk() {
+		downLoadThread = new Thread(mdownApkRunnable);
+		downLoadThread.start();
+	}
+
+	/**
+	 * 安装apk
+	 * 
+	 * @param url
+	 */
+	private void installApk() {
+		File apkfile = new File(saveFileName);
+		if (!apkfile.exists()) {
+			return;
+		}
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setDataAndType(Uri.parse("file://" + apkfile.toString()),
+				"application/vnd.android.package-archive");
+		context.startActivity(i);
+
+	}
+
+	private Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case DOWN_UPDATE:
+				mProgress.setProgress(progress);
+				break;
+			case DOWN_OVER:
+
+				installApk();
+				break;
+			default:
+				break;
+			}
+		};
+	};
+
+	/**
+	 * 请求更新信息
+	 */
+	private void getUpdateData() {
+		RequestHttp http = RequestHttp.getInstance(context);
+		UpdateHandler updateHandler = new UpdateHandler();
+		http.requestUpdate(updateHandler);
+	}
+
+
+}

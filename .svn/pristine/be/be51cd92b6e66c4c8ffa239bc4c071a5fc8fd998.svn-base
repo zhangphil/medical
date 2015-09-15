@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/title_height" >
+
+        <ImageView
+            android:id="@+id/doctor_reply_img_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:contentDescription="@null"
+            android:padding="10dp"
+            android:src="@drawable/selector_btn_back" />
+
+        <TextView
+            style="@style/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/doctor_reply" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/doctor_reply_img_line"
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/rl_title"
+        android:background="@drawable/line2" />
+
+    <ScrollView
+        android:id="@+id/doctor_reply_scrollview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/doctor_reply_img_line" >
+
+        <RelativeLayout
+            android:id="@+id/doctor_reply_rl"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/doctor_reply_img_head_bg"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="12dp"
+                android:contentDescription="@null" />
+
+            <com.wemo.medical.widget.CircularImage
+                android:id="@+id/doctor_reply_img_head"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="17dp" />
+
+            <TextView
+                android:id="@+id/doctor_reply_tv_name"
+                style="@style/survey_base_info_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="24dp"
+                android:layout_toRightOf="@+id/doctor_reply_img_head_bg"/>
+
+            <TextView
+                android:id="@+id/doctor_reply_tv_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/doctor_reply_tv_name"
+                android:layout_below="@+id/doctor_reply_tv_name"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="10dp"
+                android:maxLines="5"
+                android:clickable="true"
+                android:textColor="@color/title_gray"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:id="@+id/doctor_reply_ll_request_status"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/doctor_reply_img_head_bg"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/tv_status"
+                    android:layout_width="0dip"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/left"
+                    android:gravity="center"
+                    android:text="@string/request_status"
+                    android:textColor="@color/title_gray" />
+
+                <TextView
+                    android:id="@+id/doctor_reply_tv_request_status"
+                    android:layout_width="0dip"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/right"
+                    android:gravity="center"
+                    android:textColor="@color/title_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/doctor_reply_ll_request_type"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/doctor_reply_ll_request_status"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/tv_type"
+                    android:layout_width="0dip"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/left"
+                    android:gravity="center"
+                    android:text="@string/request_type"
+                    android:textColor="@color/title_gray" />
+
+                <TextView
+                    android:id="@+id/doctor_reply_tv_request_type"
+                    android:layout_width="0dip"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/right"
+                    android:gravity="center"
+                    android:textColor="@color/title_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/doctor_reply_ll_reserve_time"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/doctor_reply_ll_request_type"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/tv_reserve_time"
+                    android:layout_width="0dip"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/left"
+                    android:gravity="center"
+                    android:text="@string/reserve_time"
+                    android:textColor="@color/title_gray" />
+
+                <TextView
+                    android:id="@+id/doctor_reply_tv_reserve_time"
+                    android:layout_width="0dip"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/right"
+                    android:gravity="center"
+                    android:textColor="@color/title_gray" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_request_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/doctor_reply_ll_reserve_time"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/consulting_reply"
+                android:textColor="@color/title_gray" />
+
+            <TextView
+                android:id="@+id/doctor_reply_tv_request_content"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_request_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/medicalreport_box"
+                android:paddingBottom="10dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="10dp"
+                android:textColor="@color/title_gray" />
+
+            <TextView
+                android:id="@+id/tv_doctor_reply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/doctor_reply_tv_request_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="12dp"
+                android:visibility="invisible"
+                android:text="@string/doctor_reply_content"
+                android:textColor="@color/title_gray" />
+
+            <TextView
+                android:id="@+id/doctor_reply_tv_doctor_reply"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_doctor_reply"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/medicalreport_box"
+                android:paddingBottom="10dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:visibility="invisible"
+                android:paddingTop="10dp"
+                android:textColor="@color/manage_red" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                android:layout_below="@+id/doctor_reply_tv_doctor_reply" />
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

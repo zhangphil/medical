@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/item_history_tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="26dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/title_gray"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/item_history_tv_time_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/item_history_tv_time"
+        android:layout_below="@+id/item_history_tv_time"
+        android:textColor="@color/title_gray"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/item_history_img_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/item_history_tv_time"
+        android:background="@drawable/mydoctor_box_number_green"
+        android:contentDescription="@null"
+        android:src="@drawable/number_one" />
+
+    <FrameLayout
+        android:id="@+id/item_history_img_step_fl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/item_history_tv_time"
+        android:background="@drawable/mydoctor_box_number_green"
+        android:visibility="invisible" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" >
+
+            <ImageView
+                android:id="@+id/item_history_img_step_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/s1" />
+
+            <ImageView
+                android:id="@+id/item_history_img_step_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/item_history_img_step_left"
+                android:contentDescription="@null"
+                android:src="@drawable/s2" />
+        </RelativeLayout>
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/item_history_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/item_history_img_step"
+        android:layout_below="@+id/item_history_img_step"
+        android:layout_marginLeft="25dp"
+        android:contentDescription="@null"
+        android:src="@drawable/mydoctor_history_line" />
+
+    <TextView
+        android:id="@+id/item_history_tv_events"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_history_img_step"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_toRightOf="@+id/item_history_line"
+        android:textSize="34sp" />
+
+    <TextView
+        android:id="@+id/item_history_tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/item_history_tv_events"
+        android:layout_below="@+id/item_history_tv_events"
+        android:layout_marginTop="8dp"
+        android:textSize="22sp" />
+
+    <ImageView
+        android:id="@+id/item_history_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/item_history_tv_events"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@null"
+        android:src="@drawable/mydoctor_history_btn_next" />
+
+</RelativeLayout>

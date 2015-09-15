@@ -1,0 +1,11 @@
+<resources>
+
+    <style name="SampleBase" parent="@android:style/Theme.Light" />
+
+    <style name="SampleTheme" parent="SampleBase">
+        <item name="menuDrawerStyle">@style/MenuDrawerStyle</item>
+    </style>
+
+   
+
+</resources>

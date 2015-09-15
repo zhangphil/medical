@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    
+    <TextView
+        android:id="@+id/item_survey_list_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="22sp"
+        android:textColor="@color/title_gray" />
+    
+    <TextView
+        android:id="@+id/item_survey_list_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:textSize="18sp"
+        android:textColor="@color/title_gray" />
+    
+    <TextView
+        android:id="@+id/item_survey_list_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="12dp"
+        android:textSize="15sp"
+        android:layout_below="@+id/item_survey_list_date"
+        android:textColor="@color/title_gray" />
+    
+    <TextView
+        android:id="@+id/item_survey_list_sex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="8dp"
+        android:textSize="15sp"
+        android:layout_below="@+id/item_survey_list_name"
+        android:textColor="@color/title_gray" />
+    
+    
+    
+    <View 
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        android:layout_below="@+id/item_survey_list_sex"/>
+    
+    <ImageView 
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/mydoctor_history_btn_next"
+        android:contentDescription="@null"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="20dp"
+        android:layout_alignTop="@+id/item_survey_list_name"/>
+
+</RelativeLayout>

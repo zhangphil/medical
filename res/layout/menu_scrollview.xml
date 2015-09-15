@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:background="@color/white" >
+
+    <RelativeLayout
+        android:id="@+id/rl"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <View
+            android:id="@+id/left_top"
+            android:layout_width="fill_parent"
+            android:layout_height="70dp"
+            android:background="@color/manage_green" />
+
+        <View
+            android:id="@+id/left_top2"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_top" />
+
+        <ImageView
+            android:id="@+id/main_logo"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_gravity="right"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@null"
+            android:src="@drawable/logo" />
+
+        <!--
+             <View
+            android:id="@+id/left_line_top"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_top"
+            android:background="@drawable/line" />
+        -->
+
+        <TextView
+            android:id="@+id/left_examination_report"
+            style="@style/left_menu_item"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:drawableLeft="@drawable/examlation"
+            
+            android:drawablePadding="26dp"
+             android:layout_below="@+id/left_top2"
+            android:text="@string/my_examination_report" />
+
+        <View
+            android:id="@+id/left_line_lecture"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_examination_report"
+            android:background="@drawable/line" />
+
+        <TextView
+            android:id="@+id/left_survey"
+            style="@style/left_menu_item"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/left_line_lecture"
+            android:clickable="true"
+            android:drawableLeft="@drawable/survey"
+            android:text="@string/survey" />
+
+        <View
+            android:id="@+id/left_line_examination_report"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_survey"
+            android:background="@drawable/line" />
+
+        <TextView
+            android:id="@+id/left_risk_report"
+            style="@style/left_menu_item"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/left_line_examination_report"
+            android:clickable="true"
+            android:drawableLeft="@drawable/risk"
+            android:drawablePadding="22dp"
+            android:text="@string/my_risk_report" />
+
+        <View
+            android:id="@+id/left_line_risk_report"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_risk_report"
+            android:background="@drawable/line" />
+
+        <TextView
+            android:id="@+id/left_plan"
+            style="@style/left_menu_item"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/left_line_risk_report"
+            android:clickable="true"
+            android:drawableLeft="@drawable/icon_myplan"
+            android:drawablePadding="28dp"
+            android:text="@string/my_plan" />
+
+        <View
+            android:id="@+id/left_line_plan"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_plan"
+            android:background="@drawable/line" />
+
+        <TextView
+            android:id="@+id/left_doctor"
+            style="@style/left_menu_item"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/left_line_plan"
+            android:clickable="true"
+            android:drawableLeft="@drawable/icon_mydoctor"
+            android:drawablePadding="28dp"
+            android:text="@string/my_doctor" />
+
+        <View
+            android:id="@+id/left_line_doctor"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_doctor"
+            android:background="@drawable/line" />
+
+        <TextView
+            android:id="@+id/left_monitor"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/left_line_doctor"
+            android:clickable="true"
+            android:drawableLeft="@drawable/icon_monitor"
+            android:drawablePadding="24dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="14dp"
+            android:paddingLeft="32dp"
+            android:paddingTop="14dp"
+            android:text="@string/health_monitoring"
+            
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/left_line_monitor"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_monitor"
+            android:background="@drawable/line" />
+
+        <TextView
+            android:id="@+id/left_lecture"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/left_line_monitor"
+            android:clickable="true"
+            android:drawableLeft="@drawable/icon_lecture"
+            android:drawablePadding="28dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp"
+            android:paddingLeft="32dp"
+            android:paddingTop="8dp"
+            android:text="@string/health_lecture"
+
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/left_line_same"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_lecture"
+            android:background="@drawable/line" />
+
+        <TextView
+            android:id="@+id/left_same_ill"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/left_line_same"
+            android:clickable="true"
+            android:drawableLeft="@drawable/icon_together"
+            android:drawablePadding="20dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="14dp"
+            android:paddingLeft="22dp"
+            android:paddingTop="14dp"
+            android:text="@string/same_ill"
+      
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/left_line_setting"
+            android:layout_width="fill_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/left_same_ill"
+            android:background="@drawable/line" />
+
+        <ImageView
+            android:id="@+id/left_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/left_line_setting"
+            android:clickable="true"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/btn_set" />
+    </RelativeLayout>
+
+</ScrollView>

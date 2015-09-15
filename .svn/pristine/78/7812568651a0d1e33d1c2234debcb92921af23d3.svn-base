@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">健康你我</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- 登录 -->
+    <string name="phone_number">证件号码</string>
+    <string name="password">密码</string>
+    <string name="login">登录</string>
+    <string name="forget_password">忘记密码?</string>
+    <string name="do_not_have_account">还没有健管系统的账户? </string>
+    <string name="register">注册</string>
+    
+
+    <!-- left_menu  左菜单 -->
+    <string name="my_plan">我的健管计划</string>
+    <string name="my_doctor">我的健管请求</string>
+    <string name="health_monitoring">健康监测</string>
+    <string name="survey">健康生活方式问卷</string>
+    <string name="health_lecture">健康大讲堂</string>
+    <string name="same_ill">健友在线</string>
+    <string name="my_examination_report">我的体检报告</string>
+    <string name="my_risk_report">我的风险评估报告</string>
+    <string name="risk_write">填写风险评估问卷</string>
+    <string name="description">简介:</string>
+    
+    <!-- 我的健管计划 -->
+    <string name="task_content">任务内容</string>
+
+    <!-- 我的健管师 -->
+    <string name="request_content">请求内容</string>
+    <string name="consulting_reply">咨询回复</string>
+    <string name="expert_consultation">专家会诊</string>
+    <string name="health_consulting">健康咨询</string>
+    <string name="reserve_registed">预约挂号</string>
+    <string name="companion_cure">陪诊陪查</string>
+    <string name="agency_hospital">代办住院</string>
+    <string name="reserve_date">预约日期</string>
+    <string name="submit">提交</string>
+    
+    <!-- 健管师回复 -->
+    <string name="doctor_reply">健管师回复</string>
+    <string name="request_status">请求状态</string>
+    <string name="request_type">请求类型</string>
+    <string name="reserve_time">预约时间</string>
+    <string name="doctor_reply_content">健管师的回复意见</string>
+
+    <!-- 历史请求 -->
+    <string name="history_request">历史请求</string>
+
+    <!-- 管理 -->
+    <string name="management">管理</string>
+    <string name="personal_info_manage">个人信息管理</string>
+    <string name="complaints_manage">投诉管理</string>
+    <string name="change_password">修改密码</string>
+    <string name="cancellation">注销</string>
+
+    <!-- 投诉中心 -->
+    <string name="complaints_center">投诉中心</string>
+    <string name="complaints_kind">投诉类别</string>
+    <string name="complaints_reason">投诉原因</string>
+    <string name="complainted_people">被投诉人</string>
+    <string name="comfirm">确定</string>
+    <string name="cancel">取消</string>
+
+    <!-- 修改密码 -->
+	<string name="old_password">旧密码</string>
+	<string name="input_new_password">输入新密码</string>
+	<string name="confirm_new_password">确认新密码</string>
+	<string name="confirm_change">确认修改</string>
+	
+    <!-- 问卷调查 -->
+    <string name="tips">确认已填写完毕?</string>
+    <string name="aready_ok">已完毕</string>
+    <string name="not_ok">还没有</string>
+    <string name="continue_exit">继续退出吗?</string>
+    <string name="base_info">基本信息</string>
+    <string name="man">男</string>
+    <string name="woman">女</string>
+    <string name="age">年龄</string>
+    <string name="phone">手机</string>
+    <string name="last_page">上一页</string>
+    <string name="next_page">下一页</string>
+
+    <!-- 个人信息管理 -->
+    <string name="name">姓名</string>
+    <string name="sex">性别</string>
+    <string name="birthday">出生日期</string>
+    <string name="save">保存</string>
+    <string name="change_handsetno_tips">证件号码修改后需要重新登录！</string>
+    
+    <!-- 定位健康风险 -->
+    <string name="locate_healthy_risk">定位健康风险</string>
+    <string name="healthy_reason_one">风险因素一</string>
+    <string name="healthy_reason_two">风险因素二</string>
+    <string name="healthy_reason_three">风险因素三</string>
+    <string name="know_how_to_disadvance_risk">了解如何降低此项风险</string>
+    
+    <!-- 风险评估问卷 -->
+    <string name="tips1">您没有填写健康评估问卷，</string>
+    <string name="tips2">是否现在填写?</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    
+    <string name="drop_dowm">下拉刷新</string>
+    <string name="listview_header_hint_normal">下拉刷新</string>
+    <string name="listview_footer_hint_normal">查看更多</string>
+    <string name="release_update">松开刷新</string>
+    <string name="loading">正在加载···</string>
+    <string name="seen_more">更多</string>
+    <string name="listview_header_hint_ready">松开刷新数据</string>
+    <string name="listview_header_last_time">上次更新时间：</string>
+    <string name="listview_footer_hint_ready">松开载入更多</string>
+    
+</resources>

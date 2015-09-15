@@ -1,0 +1,26 @@
+<resources>
+
+    <!-- The default background of the menu. -->
+    <color name="md__transparent">#00000000</color>
+    <string name="descr_image">Image</string>
+	<color name="white">#ffffff</color>
+	<color name="red">#ff0000</color>
+	<color name="blue">#0099CC</color>
+	<color name="title_gray">#999999</color>
+	<color name="black">#000000</color>
+	<color name="manage_red">#e87362</color>   <!-- 232, 115, 98 -->
+	<color name="manage_green">#33cc66</color> <!-- 51, 204, 102 -->
+	<color name="manage_orange">#FF6726</color><!--  RGB 255 103 39  -->
+	<color name="logo_green">#009B4C</color>
+	
+	<drawable name="manage_gray">#999999</drawable>
+	<drawable name="manage_white">#ffffff</drawable>
+	
+	<!-- 定位健康风险 颜色从上到下-->
+	<!-- 232 115  98  -->
+	<!-- 255 103  38  -->
+	<!-- 255 124  46  -->
+	<!-- 36  189  71  -->
+	<!-- 51  204  102 -->
+	
+</resources>

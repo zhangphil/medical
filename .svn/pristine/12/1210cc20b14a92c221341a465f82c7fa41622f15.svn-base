@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/photo_layout_bg" >
+    
+        
+        <TextView 
+            android:id="@+id/dialog_survey_tips_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:layout_marginTop="30dp"
+            android:text="@string/tips"/>
+        
+        <TextView 
+            android:id="@+id/dialog_survey_tips_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            android:layout_below="@+id/dialog_survey_tips_one"
+            android:text="@string/continue_exit"/>
+        
+        <LinearLayout 
+            android:id="@+id/ll1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dialog_survey_tips_two"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+            
+            <TextView 
+                android:id="@+id/dialog_survey_tips_cancel"
+                android:layout_width="0dip"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:text="@string/not_ok"
+                android:textColor="@color/white"
+                android:layout_marginLeft="35dp"
+                android:gravity="center"
+                android:background="@drawable/selector_btn_cancellation"/>
+            
+            <TextView 
+                android:id="@+id/dialog_survey_tips_confirm"
+                android:layout_width="0dip"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:text="@string/aready_ok"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="35dp"
+                android:background="@drawable/selector_btn_login"/>
+            
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ll1" />
+
+</RelativeLayout>

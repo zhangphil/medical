@@ -1,0 +1,422 @@
+package com.wemo.medical.activity;
+
+import net.tsz.afinal.FinalBitmap;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.wemo.medical.R;
+import com.wemo.medical.db.SqliteHelper;
+import com.wemo.medical.entity.CustomerInfo;
+import com.wemo.medical.entity.Doctor;
+import com.wemo.medical.http.RequestHttp;
+import com.wemo.medical.util.ActivityStartAnim;
+import com.wemo.medical.util.Constants;
+import com.wemo.medical.widget.CircularImage;
+
+@SuppressLint("HandlerLeak")
+public class DoctorActivity extends Activity implements OnClickListener {
+
+	private final String TAG = "DoctorActivity";
+	private Context context;
+	private ImageView back;
+	private ImageView history;
+	private CircularImage cover_user_photo;
+	private Intent intent;
+	private RelativeLayout consult; // 健康咨询
+	private RelativeLayout expert; // 专家会诊
+	private RelativeLayout reserve; // 预约挂号
+	private RelativeLayout companion; // 陪诊陪查
+	private RelativeLayout agency; // 代办住院
+	private RelativeLayout rlDoctor;
+	private ImageView imgConsult;
+	private ImageView imgExpert;
+	private ImageView imgReserve;
+	private ImageView imgCompanion;
+	private ImageView imgAgency;
+	private TextView date;
+	private TextView submit;
+	private TextView description;
+	private TextView dactorName;
+	private EditText content;
+	private RequestHttp http;
+	private MedicalApplication application;
+	private CustomerInfo customerInfo;
+	private Doctor doctor;
+	private Button button_call;
+
+	/**
+	 * 数据字典中健康方案类型 63:健康咨询 64:专家会诊 65:预约挂号 66:陪诊陪查 67:代办住院
+	 */
+	private int taskType = 64;
+	/**
+	 * 获取预约日期的Handler
+	 */
+	public static Handler getreservedDateHandler;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_doctor);
+
+		initView();
+		initMembers();
+		setHandler();
+		setHandler();
+
+		//判断是否为团体
+		cUstype();
+	}
+
+	/**
+	 * 实例化控件
+	 */
+	private void initView() {
+		back = (ImageView) this.findViewById(R.id.doctor_img_back);
+		history = (ImageView) this.findViewById(R.id.doctor_img_history);
+		cover_user_photo = (CircularImage) findViewById(R.id.doctor_head);
+		expert = (RelativeLayout) this.findViewById(R.id.doctor_rl_expert);
+		consult = (RelativeLayout) this.findViewById(R.id.doctor_rl_consult);
+		reserve = (RelativeLayout) this.findViewById(R.id.doctor_rl_reserve);
+		companion = (RelativeLayout) this
+				.findViewById(R.id.doctor_rl_companion);
+		agency = (RelativeLayout) this.findViewById(R.id.doctor_rl_agency);
+		rlDoctor = (RelativeLayout) this.findViewById(R.id.rl_doctor);
+		imgExpert = (ImageView) this.findViewById(R.id.doctor_img_consultation);
+		imgConsult = (ImageView) this
+				.findViewById(R.id.doctor_img_health_consulting);
+		imgReserve = (ImageView) this
+				.findViewById(R.id.doctor_img_reserve_registed);
+		imgCompanion = (ImageView) this
+				.findViewById(R.id.doctor_img_companion_cure);
+		imgAgency = (ImageView) this
+				.findViewById(R.id.doctor_img_agency_hospital);
+		date = (TextView) this.findViewById(R.id.doctor_reserve_date);
+		submit = (TextView) this.findViewById(R.id.doctor_btn_submit);
+		dactorName = (TextView) this.findViewById(R.id.doctor_tv_name);
+		description = (TextView) this.findViewById(R.id.doctor_tv_description);
+		content = (EditText) this.findViewById(R.id.doctor_et_content);
+		button_call = (Button) this.findViewById(R.id.doctro_btn_call);
+
+		back.setOnClickListener(this);
+		history.setOnClickListener(this);
+		expert.setOnClickListener(this);
+		consult.setOnClickListener(this);
+		reserve.setOnClickListener(this);
+		companion.setOnClickListener(this);
+		agency.setOnClickListener(this);
+		date.setOnClickListener(this);
+		submit.setOnClickListener(this);
+		rlDoctor.setOnClickListener(this);
+		button_call.setOnClickListener(this);
+	}
+
+	/**
+	 * 实例化成员变量
+	 */
+	private void initMembers() {
+		context = DoctorActivity.this;
+		http = RequestHttp.getInstance(context);
+		application = (MedicalApplication) getApplication();
+		doctor = new Doctor();
+		customerInfo = application.getCustomerInfo();
+		if (customerInfo.getHealMngName() != null) {
+			dactorName.setText(customerInfo.getHealMngName());
+		}
+		cover_user_photo.setImageResource(R.drawable.set_change_userdata_icon);
+		GetCustomerHandler getCustomerHandler = new GetCustomerHandler();
+		http.requestGetCustomer(getCustomerHandler, customerInfo.getId());
+		GetDoctorHandler getDoctorHandler = new GetDoctorHandler();
+		http.requestGetDoctor(getDoctorHandler, customerInfo.getHealMngId());
+		showDialog();
+	}
+
+	/**
+	 * 获取预约如期
+	 */
+	private void setHandler() {
+		getreservedDateHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+				if (msg.what == 200) {
+					date.setText("预约日期:" + msg.obj.toString());
+				} else if (msg.what == 100) {
+					content.setText("");
+					setSelect(imgExpert, imgAgency, imgCompanion, imgConsult,
+							imgReserve, taskType);
+					intent = new Intent(DoctorActivity.this,
+							HistoryActivity.class);
+					date.setText("预约日期");
+					startActivity(intent);
+				}
+			}
+		};
+
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.doctor_img_back:
+			this.finish();
+			ActivityStartAnim.TopToBottom(this);
+			break;
+
+		case R.id.doctor_img_history:
+			intent = new Intent(DoctorActivity.this, HistoryActivity.class);
+			startActivity(intent);
+			ActivityStartAnim.RightToLeft2(this);
+			break;
+
+		case R.id.doctor_rl_consult:
+			setSelect(imgConsult, imgAgency, imgCompanion, imgExpert,
+					imgReserve, 63);
+			break;
+
+		case R.id.doctor_rl_expert:
+			setSelect(imgExpert, imgReserve, imgAgency, imgCompanion,
+					imgConsult, 64);
+			break;
+
+		case R.id.doctor_rl_reserve:
+			setSelect(imgReserve, imgAgency, imgCompanion, imgConsult,
+					imgExpert, 65);
+			break;
+
+		case R.id.doctor_rl_companion:
+			setSelect(imgCompanion, imgAgency, imgConsult, imgExpert,
+					imgReserve, 66);
+			break;
+
+		case R.id.doctor_rl_agency:
+			setSelect(imgAgency, imgCompanion, imgConsult, imgExpert,
+					imgReserve, 67);
+			break;
+
+		case R.id.doctor_reserve_date:
+			DatePickerDialog dialog = new DatePickerDialog(context, 2010, 10,
+					4, 1);
+			dialog.show();
+			break;
+
+		case R.id.doctor_btn_submit:
+			submit();
+			break;
+
+		case R.id.rl_doctor:
+			DoctorDialog doctorDialog = new DoctorDialog(context,
+					doctor.getName(), doctor.getBrief());
+			doctorDialog.show();
+			break;
+		// 拨打电话 
+		case R.id.doctro_btn_call:
+			Intent intentPhone = new Intent(Intent.ACTION_CALL,
+					Uri.parse("tel:" + "02887394807"));
+
+			startActivity(intentPhone);
+
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * 选择健康方案任务类型，将v1设置为已选择，其他设置为未选择
+	 * 
+	 * @param v1
+	 * @param v2
+	 * @param v3
+	 * @param v4
+	 * @param v5
+	 * @param type
+	 *            健康方案类型 63:健康咨询 64:专家会诊 65:预约挂号 66:陪诊陪查 67:代办住院
+	 */
+	private void setSelect(ImageView v1, ImageView v2, ImageView v3,
+			ImageView v4, ImageView v5, int type) {
+		v1.setImageResource(R.drawable.mydoctor_btn_point_pressed);
+		v2.setImageResource(R.drawable.mydoctor_btn_point_normal);
+		v3.setImageResource(R.drawable.mydoctor_btn_point_normal);
+		v4.setImageResource(R.drawable.mydoctor_btn_point_normal);
+		v5.setImageResource(R.drawable.mydoctor_btn_point_normal);
+		taskType = type;
+		Log.d(TAG, "taskType:  " + taskType);
+	}
+
+	/**
+	 * 点击保存按钮后的操作
+	 */
+	private void submit() {
+		if (content.getText().toString().equals("")) {
+			Constants.showToast(context, "请输入请求内容");
+		} else if (content.getText().toString().contains("请求内容")) {
+			Constants.showToast(context, "请输入正确的请求内容");
+		} else {
+			if (date.getText().toString().length() < 5) {
+				Constants.showToast(context, "请选择预约时间");
+			} else {
+				String sDate = date.getText().toString()
+						.substring(5, date.getText().toString().length());
+				String healMng = customerInfo.getHealMngId();
+				Log.d(TAG, "healMng " + healMng);
+				String cus = customerInfo.getId();
+				String reqContent = content.getText().toString();
+				AddApplyHandler addApplyHandler = new AddApplyHandler();
+				http.requestAddApply(addApplyHandler, taskType + "", "93",
+						sDate, healMng, cus, reqContent);
+				showDialog();
+			}
+		}
+	}
+
+	/**
+	 * 添加健管请求Handler
+	 * 
+	 * @author baiqiao
+	 * 
+	 */
+	private class AddApplyHandler extends Handler {
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case RequestHttp.REQUEST_SUCCESS:
+				waitDialog.dismiss();
+				// Constants.showToast(context, "提交成功");
+				// content.setText("");
+				// setSelect(imgExpert, imgAgency, imgCompanion, imgConsult,
+				// imgReserve, taskType);
+				// intent = new Intent(DoctorActivity.this,
+				// HistoryActivity.class);
+				// date.setText("预约日期");
+				DoctorTipsDialog dialog = new DoctorTipsDialog(context);
+				dialog.show();
+				// startActivity(intent);
+				break;
+
+			case RequestHttp.REQUEST_FAILER:
+				waitDialog.dismiss();
+				RequestHttp.badRequest(Integer.parseInt(msg.obj.toString()),
+						null);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	private class GetCustomerHandler extends Handler {
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case RequestHttp.REQUEST_SUCCESS:
+				customerInfo = (CustomerInfo) msg.obj;
+				waitDialog.dismiss();
+				break;
+
+			case RequestHttp.REQUEST_FAILER:
+				waitDialog.dismiss();
+				RequestHttp.badRequest(Integer.parseInt(msg.obj.toString()),
+						null);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	private class GetDoctorHandler extends Handler {
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case RequestHttp.REQUEST_SUCCESS:
+				doctor = (Doctor) msg.obj;
+				application.setDoctor(doctor);
+				FinalBitmap fb = FinalBitmap.create(context);
+				String picUrl = Constants.BASE_URL
+						+ "/commons/attachment/download/" + doctor.getPicUrl();
+				Log.d(TAG, "picUrl:  " + picUrl);
+				fb.display(cover_user_photo, picUrl);
+				fb.configLoadfailImage(R.drawable.set_change_userdata_icon);
+				description.setText("简介：" + doctor.getBrief());
+
+				break;
+			case RequestHttp.REQUEST_FAILER:
+				RequestHttp.badRequest(Integer.parseInt(msg.obj.toString()),
+						null);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	}
+
+	private void showDialog() {
+		inflater = LayoutInflater.from(this);
+		view = inflater.inflate(R.layout.dialog_upload, null);
+		iv_loading = (ImageView) view.findViewById(R.id.iv_loading);
+
+		waitDialog = Constants.createLoadingDialog(DoctorActivity.this, view);
+		waitDialog.show();
+		Object obj = iv_loading.getBackground();
+		anim = (AnimationDrawable) obj;
+		anim.stop();
+		anim.start();
+	}
+
+	private View view;
+	private LayoutInflater inflater;
+	private ImageView iv_loading;
+	private Dialog waitDialog;
+	private AnimationDrawable anim = null;
+
+	/**
+	 *  * 2015-3
+	 * 根据CusType判断用户类型
+	 *  @author lxh
+	
+	 */
+	private void cUstype() {
+		SqliteHelper sqliteHelper = new SqliteHelper(context);
+		String mCusType=sqliteHelper.getUser().getCusTypeId();
+		Log.v("CusType", mCusType);
+		if (mCusType.equals("198")) {
+			consult.setVisibility(View.GONE);
+			expert.setVisibility(View.GONE);
+			companion.setVisibility(View.GONE);
+			
+
+		}
+
+	}
+
+}

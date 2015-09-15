@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/item_complaints_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/empty"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="40dp"
+        android:background="@drawable/set_line_orange"
+        android:contentDescription="@null" />
+
+    <ImageView
+        android:id="@+id/item_complaints_step_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="30dp"
+        android:contentDescription="@null"
+        android:src="@drawable/set_icon_orange" />
+
+    <TextView
+        android:id="@+id/item_complaints_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_toRightOf="@+id/item_complaints_step"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/item_complaints_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_complaints_name"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/item_complaints_step"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/item_complaints_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="38dp"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/item_complaints_reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/item_complaints_status"
+        android:layout_below="@+id/item_complaints_status"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical" />
+
+    <View
+        android:id="@+id/empty"
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        android:layout_below="@+id/item_complaints_reason" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/item_complaints_step"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/title_gray" />
+
+</RelativeLayout>

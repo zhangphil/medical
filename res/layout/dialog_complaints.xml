@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/tankuang" >
+
+    <RelativeLayout
+        android:id="@+id/rl"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tankuang" >
+
+        <LinearLayout
+            android:id="@+id/dialog_complaints_ll_kind"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:text="@string/complaints_kind" />
+
+            <Spinner
+                android:id="@+id/dialog_complaints_spinner_kind"
+                android:layout_width="0dip"
+                android:layout_height="38dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="2"
+                android:background="@drawable/arrow" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dialog_complaints_ll_people_complainted"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dialog_complaints_ll_kind"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:textSize="16sp"
+                android:text="@string/complainted_people" />
+
+            <Spinner
+                android:id="@+id/dialog_complaints_spinner_complainted"
+                android:layout_width="0dip"
+                android:layout_height="38dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="2"
+                android:background="@drawable/arrow" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/dialog_complaints_reason"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dialog_complaints_ll_people_complainted"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/mydoctor_box"
+            android:gravity="left|top"
+            android:hint="@string/complaints_reason"
+            android:padding="8dp"
+            android:textSize="14sp" />
+
+        <View
+            android:id="@+id/dialog_complaints_line1"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/dialog_complaints_reason"
+            android:layout_marginTop="25dp"
+            android:background="@color/title_gray" />
+
+        <View
+            android:id="@+id/dialog_complaints_line2"
+            android:layout_width="0.5dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/dialog_complaints_line1"
+            android:layout_centerHorizontal="true"
+            android:background="@color/title_gray" />
+
+        <TextView
+            android:id="@+id/dialog_complaints_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dialog_complaints_line1"
+            android:layout_toLeftOf="@+id/dialog_complaints_line2"
+            android:clickable="true"
+            android:padding="10dp"
+            android:gravity="center"
+            android:layout_alignParentLeft="true"
+            android:text="@string/cancel"
+            android:layout_alignBottom="@+id/dialog_complaints_line2"
+            android:textColor="@drawable/selector_btn_management_text_change"
+            android:background="@drawable/selector_btn_management_green"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/dialog_complaints_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dialog_complaints_line1"
+            android:layout_toRightOf="@+id/dialog_complaints_line2"
+            android:clickable="true"
+            android:padding="10dp"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:layout_alignBottom="@+id/dialog_complaints_line2"
+            android:text="@string/comfirm"
+            android:textColor="@drawable/selector_btn_management_text_change"
+            android:background="@drawable/selector_btn_management_green"
+            android:textSize="18sp" />
+    </RelativeLayout>
+    
+  	<View 
+  	    android:layout_below="@+id/rl"
+  	    android:layout_width="fill_parent"
+  	    android:layout_height="10dp"/>
+
+</RelativeLayout>

@@ -1,0 +1,144 @@
+package com.wemo.medical.activity;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.widget.ImageView;
+
+import com.wemo.medical.R;
+import com.wemo.medical.entity.CustomerInfo;
+import com.wemo.medical.util.ActivityStartAnim;
+import com.wemo.medical.util.Constants;
+
+@SuppressLint("SetJavaScriptEnabled")
+public class SurveyActivity extends Activity implements OnClickListener {
+
+	private ImageView back;
+	private WebView web;
+	private MedicalApplication application;
+	private CustomerInfo cusInfo;
+	private Context context;
+	public static Handler finishHandler;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_survey);
+
+		initView();
+		setHandler();
+	}
+
+	private void initView() {
+		context = SurveyActivity.this;
+		Map<String, String> token = new HashMap<String, String>();
+		back = (ImageView) this.findViewById(R.id.survey_img_back);
+		web = (WebView) this.findViewById(R.id.survey_webview);
+		application = (MedicalApplication) getApplication();
+		cusInfo = application.getCustomerInfo();
+		String authorization = "Basic " + cusInfo.getToken();
+		token.put("Authorization", authorization);
+		back.setOnClickListener(this);
+		Log.d("SurveyActivity", token.toString());
+		Log.d("SurveyActivity", cusInfo.getId());
+		web.getSettings().setJavaScriptEnabled(true);
+		web.getSettings().setSupportZoom(true);
+		web.loadUrl(Constants.BASE_URL + "/mobile/single/risk/form?cid="
+				+ cusInfo.getId() + "&authcType=from_authc", token);
+		showDialog();
+		web.setWebChromeClient(new WebChromeClient() {
+
+			@Override
+			public void onProgressChanged(WebView view, int newProgress) {
+				super.onProgressChanged(view, newProgress);
+				if (newProgress == 100) {
+					waitDialog.dismiss();
+				}
+			}
+		});
+		// web.setWebViewClient(new WebViewClient() {
+		//
+		// @Override
+		// public boolean shouldOverrideUrlLoading(WebView view, String url) {
+		// view.loadUrl(url);
+		// return true;
+		// }
+		//
+		// });
+	}
+
+	private void setHandler() {
+		finishHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+				if (msg.what == 200) {
+					SurveyActivity.this.finish();
+					ActivityStartAnim.LeftToRightClose(SurveyActivity.this);
+				}
+			}
+		};
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCoder, KeyEvent event) {
+		if (web.canGoBack() && keyCoder == KeyEvent.KEYCODE_BACK) {
+			web.goBack(); // goBack()表示返回webView的上一页面
+			return true;
+		} else {
+			SurveyTipsDialog dialog = new SurveyTipsDialog(context);
+			dialog.show();
+		}
+		return false;
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.survey_img_back:
+			SurveyTipsDialog dialog = new SurveyTipsDialog(context);
+			dialog.show();
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	private void showDialog() {
+		inflater = LayoutInflater.from(this);
+		view = inflater.inflate(R.layout.dialog_upload, null);
+		iv_loading = (ImageView) view.findViewById(R.id.iv_loading);
+
+		waitDialog = Constants.createLoadingDialog(SurveyActivity.this, view);
+		waitDialog.show();
+		Object obj = iv_loading.getBackground();
+		anim = (AnimationDrawable) obj;
+		anim.stop();
+		anim.start();
+	}
+
+	private View view;
+	private LayoutInflater inflater;
+	private ImageView iv_loading;
+	private Dialog waitDialog;
+	private AnimationDrawable anim = null;
+}
